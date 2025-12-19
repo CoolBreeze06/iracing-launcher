@@ -1,0 +1,9 @@
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; height: 100%; }
+button { font: inherit; border: 0; background: transparent; }
+button:focus-visible { outline: 2px solid #4a90e2; }
+
+/* Fallback pour la police */
+body {
+  font-family: "Irish Grover-Regular", Helvetica, Arial, sans-serif;
+}

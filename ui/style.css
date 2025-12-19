@@ -1,0 +1,373 @@
+/* =========================
+   GLOBAL
+   ========================= */
+html, body {
+  width: 100%;
+  min-height: 820px;
+  margin: 0;
+  background: radial-gradient(circle at top, #2a2626, #0f0d0d 70%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+  font-family: "Irish Grover-Regular", Helvetica;
+}
+
+/* =========================
+   FRAME
+   ========================= */
+.frame {
+  position: relative;
+  width: 1024px;
+  min-height: 768px;
+  height: auto;
+  padding-bottom: 170px;
+}
+
+/* =========================
+   TITRE
+   ========================= */
+.frame .title {
+  position: absolute;
+  top: 28px;
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 42px;
+  text-align: center;
+  text-shadow: 0 3px 8px rgba(0,0,0,0.6);
+}
+
+/* =========================
+   DESCRIPTION
+   ========================= */
+.frame .description {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 550px;
+  height: 30px;
+}
+
+.frame .description .rectangle {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  border: 2px solid #3aa0ff;
+}
+
+.frame .description .div {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #3b3b3b;
+  font-size: 15px;
+  pointer-events: none;
+}
+
+/* =========================
+   LISTE APPLIS
+   ========================= */
+.frame .apps-list {
+  width: 900px;
+  margin: 150px auto 0 auto;
+  padding: 0;
+  overflow: visible;
+}
+
+.frame .app-row {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  background-color: #6e6e6e;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* checkbox */
+.frame .app-row .case-coche {
+  position: absolute;
+  left: 18px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background-color: #d9d9d9;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.frame .app-row .case-coche.checked {
+  background-color: #7bafbb;
+}
+
+.frame .app-row .case-coche.checked::after {
+  content: "✓";
+  line-height: 1;
+}
+
+/* 🟢 NOUVEAU: Indicateur de statut */
+.frame .app-row .status-indicator {
+  position: absolute;
+  left: 54px;
+  top: 15px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.frame .app-row .status-indicator.running {
+  background-color: #4caf50;  /* Vert */
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+}
+
+.frame .app-row .status-indicator.stopped {
+  background-color: #f44336;  /* Rouge */
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
+}
+
+/* icon 32x32 - POSITION AJUSTÉE */
+.frame .app-row .icone {
+  position: absolute;
+  left: 74px;  /* Décalé pour faire place au status indicator */
+  top: 14px;
+  width: 32px;
+  height: 32px;
+
+  background-color: #e0e0e0;
+  border-radius: 8px;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+}
+
+/* name - POSITION AJUSTÉE */
+.frame .app-row .name-apps {
+  position: absolute;
+  left: 134px;  /* Décalé */
+  top: 16px;
+  width: 180px;  /* Légèrement réduit */
+  height: 28px;
+  background-color: #d9d9d9;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #020202;
+}
+
+/* path - POSITION AJUSTÉE */
+.frame .app-row .file-path {
+  position: absolute;
+  left: 360px;  /* Décalé */
+  right: 190px;  /* Plus d'espace pour les nouveaux boutons */
+  top: 16px;
+  height: 28px;
+  background-color: #d9d9d9;
+  border-radius: 12px;
+
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #020202;
+}
+
+/* boutons browse / delete / move / restart */
+.frame .app-row .search-apps,
+.frame .app-row .delete-apps,
+.frame .app-row .move-up,
+.frame .app-row .move-down,
+.frame .app-row .restart-app {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.frame .app-row .search-apps {
+  position: absolute;
+  right: 150px;  /* Décalé pour faire place au restart */
+  top: 15px;
+  background-color: #6fb15e;
+}
+.frame .app-row .search-apps::after { content: "🔎"; font-size: 16px; }
+
+/* ⟳ NOUVEAU: Bouton Restart */
+.frame .app-row .restart-app {
+  position: absolute;
+  right: 114px;
+  top: 15px;
+  background-color: #e89c3a;  /* Orange */
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+}
+.frame .app-row .restart-app::after {
+  content: "⟳";
+}
+.frame .app-row .restart-app:hover {
+  background-color: #ff9800;
+  transform: scale(1.05);
+}
+
+.frame .app-row .move-up {
+  position: absolute;
+  right: 78px;
+  top: 15px;
+  background-color: #5e9ab1;
+}
+.frame .app-row .move-up::after {
+  content: "⬆";
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.frame .app-row .move-down {
+  position: absolute;
+  right: 42px;
+  top: 15px;
+  background-color: #5e9ab1;
+}
+.frame .app-row .move-down::after {
+  content: "⬇";
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.frame .app-row .delete-apps {
+  position: absolute;
+  right: 6px;
+  top: 15px;
+  background-color: #b15758;
+}
+.frame .app-row .delete-apps::after {
+  content: "✕";
+  font-size: 18px;
+  color: rgba(0,0,0,0.65);
+  font-weight: 900;
+}
+
+/* =========================
+   ✅ BARRE BOUTONS EN BAS
+   ========================= */
+.frame .bottom-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 55px;
+  width: 1024px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 70px;
+
+  z-index: 50;
+}
+
+/* boutons = containers */
+.frame .button-start,
+.frame .button-stop,
+.frame .button-ajout-game {
+  position: relative;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+/* tailles */
+.frame .button-start { width: 202px; height: 50px; }
+.frame .button-stop  { width: 202px; height: 50px; }
+.frame .button-ajout-game { width: 340px; height: 52px; }
+
+/* ✅ fonds -> TOUS en absolute */
+.frame .button-start-apps,
+.frame .button-stop-apps,
+.frame .button-ajout-apps {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.frame .button-start-apps { background-color: #6eb05e; }
+.frame .button-stop-apps  { background-color: #b05658; }
+.frame .button-ajout-apps {
+  background-color: #7bafbb;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.25);
+}
+
+/* ✅ texte au-dessus */
+.frame .text-wrapper,
+.frame .tex-ajout-jeux {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.frame .text-wrapper {
+  color: #020202;
+  font-size: 36px;
+}
+
+.frame .tex-ajout-jeux {
+  color: #000000;
+  font-size: 34px;
+}
+
+/* hover */
+.frame .button-start:hover .button-start-apps,
+.frame .button-stop:hover .button-stop-apps,
+.frame .button-ajout-game:hover .button-ajout-apps {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
