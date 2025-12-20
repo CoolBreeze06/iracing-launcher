@@ -1,0 +1,5 @@
+{
+     "version": "1.2",
+     "download_url": "https://github.com/CoolBreeze06/iracing-launcher/releases/download/v1.2/iRacing_Launcher.exe",
+     "changelog": "- Bouton restart fonctionnel (⟳)\n- Indicateur de statut temps réel (🟢/🔴)\n- Affichage version dans l'interface\n- Système de mise à jour automatique complet"
+   }
