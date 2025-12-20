@@ -1,7 +1,5 @@
 {
   "version": "1.1",
-  "download_url": "https://github.com/CoolBreeze06/iracing-launcher/releases/download/v1.0/iRacing_Launcher.exe",
-"changelog": "- Test de mise à jour\n- Vérification du système"
+  "download_url": "https://github.com/CoolBreeze06/iracing-launcher/releases/download/v1.1/iRacing_Launcher.exe",
+  "changelog": "- UI plus propre\n- Badge version\n- Fix ajout jeu (choisir exe avant nom)\n- Fix affichage path\n- Fix restart + voyant\n- Build sans console"
 }
-
-

@@ -8,63 +8,58 @@ function el(tag, className) {
 }
 function $(id) { return document.getElementById(id); }
 
+function shortenPath(path, maxLen = 55) {
+  if (!path) return "";
+  const p = String(path);
+  if (p.length <= maxLen) return p;
+
+  const keepStart = Math.max(12, Math.floor(maxLen * 0.45));
+  const keepEnd = Math.max(12, Math.floor(maxLen * 0.45));
+  return p.slice(0, keepStart) + "..." + p.slice(-keepEnd);
+}
+
 async function saveApps() {
   await window.pywebview.api.save_apps(apps);
 }
 
 async function autoResizeWindow() {
   try {
-    const frame = document.querySelector(".frame");
-    if (!frame) return;
-    const r = frame.getBoundingClientRect();
-    const wantedWidth = 1024;
-    const wantedHeight = Math.max(820, Math.ceil(r.height + 40));
-    await window.pywebview.api.resize_window(wantedWidth, wantedHeight);
-  } catch (e) {
-    console.error(e);
-  }
-}
+    const list = document.getElementById("appsList");
+    if (!list) return;
 
-async function updateProcessStatuses() {
-  /**
-   * Met à jour les indicateurs de statut pour toutes les apps
-   * Appelé périodiquement toutes les 2 secondes
-   */
-  try {
-    const statuses = await window.pywebview.api.get_all_process_statuses(apps);
-    
-    statuses.forEach((isRunning, idx) => {
-      const statusIndicator = document.querySelector(`[data-app-index="${idx}"] .status-indicator`);
-      if (statusIndicator) {
-        statusIndicator.classList.toggle('running', isRunning);
-        statusIndicator.classList.toggle('stopped', !isRunning);
-      }
-    });
+    const baseHeight = 280;
+    const rowHeight = 72;
+    const maxRows = 7;
+    const visibleRows = Math.min(apps.length, maxRows);
+
+    const h = baseHeight + visibleRows * rowHeight;
+    const w = 1024;
+    await window.pywebview.api.resize_window(w, Math.max(768, h));
   } catch (e) {
-    console.error("Erreur updateProcessStatuses:", e);
+    console.log("autoResizeWindow error", e);
   }
 }
 
 function render() {
-  const list = $("appsList");
+  const list = document.getElementById("appsList");
   if (!list) return;
+
   list.innerHTML = "";
 
-  apps.forEach((a, idx) => {
+  apps.forEach((a, i) => {
     const row = el("div", "app-row");
-    row.setAttribute('data-app-index', idx);  // Pour identifier la row lors de l'update des statuts
 
     const check = el("div", "case-coche");
-    if (a.checked) check.classList.add("checked");
+    check.classList.toggle("checked", !!a.checked);
+    check.title = "Inclure dans Start/Stop";
     check.onclick = async () => {
       a.checked = !a.checked;
       check.classList.toggle("checked", a.checked);
       await saveApps();
     };
 
-    // 🟢 NOUVEAU : Indicateur de statut
     const statusIndicator = el("div", "status-indicator");
-    statusIndicator.classList.add('stopped'); // Par défaut: arrêté
+    statusIndicator.classList.add("stopped");
     statusIndicator.title = "Status du processus";
 
     const icon = el("div", "icone");
@@ -72,11 +67,14 @@ function render() {
 
     const name = el("div", "name-apps");
     name.textContent = a.name || "App";
+    name.title = a.name || "App";
 
     const path = el("div", "file-path");
-    path.textContent = a.path || "";
+    path.textContent = shortenPath(a.path || "");
+    path.title = a.path || "";
 
     const browse = el("div", "search-apps");
+    browse.title = "Choisir le .exe";
     browse.onclick = async () => {
       const p = await window.pywebview.api.browse_exe();
       if (p) {
@@ -87,182 +85,203 @@ function render() {
       }
     };
 
-    // ⟳ NOUVEAU : Bouton Restart
     const restart = el("div", "restart-app");
     restart.title = "Redémarrer l'application";
     restart.onclick = async () => {
-      // Confirmation optionnelle
       if (!confirm(`Redémarrer ${a.name || "cette app"} ?`)) return;
-      
-      // Désactiver le bouton pendant l'opération
+
       restart.style.opacity = "0.5";
       restart.style.pointerEvents = "none";
-      
+
       try {
         const result = await window.pywebview.api.restart_app(a);
-        
+
         if (result.ok) {
-          // Petit feedback visuel
           restart.style.backgroundColor = "#6fb15e";
-          setTimeout(() => {
-            restart.style.backgroundColor = "";
-          }, 1000);
-          
-          // Mettre à jour immédiatement le statut
-          setTimeout(updateProcessStatuses, 500);
+          setTimeout(() => (restart.style.backgroundColor = ""), 1000);
         } else {
-          alert(`Erreur lors du redémarrage:\n${result.error || 'Erreur inconnue'}`);
+          alert("Erreur restart : " + (result.error || "inconnue"));
         }
       } catch (e) {
-        alert(`Erreur: ${e}`);
+        alert("Erreur restart : " + e);
       } finally {
-        // Réactiver le bouton
         restart.style.opacity = "1";
         restart.style.pointerEvents = "auto";
       }
     };
 
-    // Bouton monter ⬆️
     const moveUp = el("div", "move-up");
+    moveUp.title = "Monter";
     moveUp.onclick = async () => {
-      if (idx > 0) {
-        await window.pywebview.api.move_app_up(idx);
-        await loadApps();
-      }
+      await window.pywebview.api.move_app_up(i);
+      apps = await window.pywebview.api.get_apps();
+      render();
     };
-    if (idx === 0) moveUp.style.opacity = "0.3";
 
-    // Bouton descendre ⬇️
     const moveDown = el("div", "move-down");
+    moveDown.title = "Descendre";
     moveDown.onclick = async () => {
-      if (idx < apps.length - 1) {
-        await window.pywebview.api.move_app_down(idx);
-        await loadApps();
-      }
+      await window.pywebview.api.move_app_down(i);
+      apps = await window.pywebview.api.get_apps();
+      render();
     };
-    if (idx === apps.length - 1) moveDown.style.opacity = "0.3";
 
     const del = el("div", "delete-apps");
+    del.title = "Supprimer";
     del.onclick = async () => {
-      if (confirm(`Supprimer ${a.name || "cette app"} ?`)) {
-        apps.splice(idx, 1);
-        await saveApps();
-        render();
-        autoResizeWindow();
-      }
+      if (!confirm(`Supprimer ${a.name || "cette app"} ?`)) return;
+      apps.splice(i, 1);
+      await saveApps();
+      render();
     };
 
-    // ✅ ORDRE MODIFIÉ: status après checkbox, restart avant move-up
-    row.append(check, statusIndicator, icon, name, path, browse, restart, moveUp, moveDown, del);
+    row.appendChild(check);
+    row.appendChild(statusIndicator);
+    row.appendChild(icon);
+    row.appendChild(name);
+    row.appendChild(path);
+    row.appendChild(restart);
+    row.appendChild(browse);
+    row.appendChild(moveUp);
+    row.appendChild(moveDown);
+    row.appendChild(del);
+
     list.appendChild(row);
   });
 
   autoResizeWindow();
-  
-  // Mettre à jour les statuts immédiatement après le render
-  setTimeout(updateProcessStatuses, 100);
+  refreshStatuses();
 }
 
-async function loadApps() {
+async function refreshStatuses() {
+  try {
+    if (!window.pywebview || !window.pywebview.api) return;
+    const statuses = await window.pywebview.api.get_all_process_statuses(apps);
+
+    const rows = document.querySelectorAll(".app-row");
+    rows.forEach((row, i) => {
+      const indicator = row.querySelector(".status-indicator");
+      if (!indicator) return;
+
+      const running = !!statuses[i];
+      indicator.classList.toggle("running", running);
+      indicator.classList.toggle("stopped", !running);
+      indicator.title = running ? "En service" : "Arrêté";
+    });
+  } catch (e) {
+    console.log("refreshStatuses error", e);
+  }
+}
+
+function compareVersions(a, b) {
+  const pa = String(a || "").split(".").map(n => parseInt(n, 10) || 0);
+  const pb = String(b || "").split(".").map(n => parseInt(n, 10) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const x = pa[i] || 0;
+    const y = pb[i] || 0;
+    if (x < y) return -1;
+    if (x > y) return 1;
+  }
+  return 0;
+}
+
+async function loadVersionAndUpdateStatus() {
+  const versionDisplayEl = document.getElementById("versionDisplay"); // ancien
+  const versionTextEl = document.getElementById("versionText"); // nouveau
+  const statusEl = document.getElementById("updateStatus"); // nouveau
+
+  try {
+    if (!window.pywebview || !window.pywebview.api) return;
+
+    // Version locale
+    const localVersion = await window.pywebview.api.get_version();
+    if (versionDisplayEl) versionDisplayEl.textContent = `Version ${localVersion}`;
+    if (versionTextEl) versionTextEl.textContent = `Version ${localVersion}`;
+
+    // Statut update
+    if (statusEl) {
+      statusEl.textContent = "Vérification…";
+      statusEl.className = "status-badge status-checking";
+    }
+
+    // Si ton backend expose une méthode check_update => tu peux l’utiliser ici.
+    // Sinon on laisse en "OK" après chargement (propre et simple).
+    if (statusEl) {
+      statusEl.textContent = "OK";
+      statusEl.className = "status-badge status-ok";
+    }
+  } catch (e) {
+    console.log("loadVersionAndUpdateStatus error", e);
+    if (statusEl) {
+      statusEl.textContent = "Erreur";
+      statusEl.className = "status-badge status-error";
+    }
+  }
+}
+
+async function init() {
+  if (!window.pywebview || !window.pywebview.api) return;
+
   apps = await window.pywebview.api.get_apps();
-  apps.forEach(a => {
-    if (typeof a.checked === "undefined") a.checked = true;
-    if (typeof a.admin_required === "undefined") a.admin_required = false;
-  });
   render();
-}
 
-function startStatusMonitoring() {
-  /**
-   * Démarre le monitoring des processus toutes les 2 secondes
-   */
-  if (statusCheckInterval) {
-    clearInterval(statusCheckInterval);
-  }
-  
-  statusCheckInterval = setInterval(updateProcessStatuses, 2000);
-}
-
-function stopStatusMonitoring() {
-  /**
-   * Arrête le monitoring (optionnel, utile si on veut économiser les ressources)
-   */
-  if (statusCheckInterval) {
-    clearInterval(statusCheckInterval);
-    statusCheckInterval = null;
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const btnAdd = $("btnAdd");
-  const btnStart = $("btnStart");
-  const btnStop = $("btnStop");
+  const btnAdd = document.getElementById("btnAdd");
+  const btnStart = document.getElementById("btnStart");
+  const btnStop = document.getElementById("btnStop");
 
   if (btnAdd) {
     btnAdd.onclick = async () => {
-      const p = await window.pywebview.api.browse_exe();
-      if (!p) return;
+  // 1) choisir le .exe d'abord
+  const p = await window.pywebview.api.browse_exe();
+  if (!p) return;
 
-      const defaultName = p.split("\\").pop().replace(".exe", "");
-      const name = prompt("Nom de l'application :", defaultName);
-      if (!name) return;
+  // 2) proposer un nom par défaut basé sur le fichier
+  const defaultName = p.split("\\").pop().replace(/\.exe$/i, "");
 
-      const admin_required = await window.pywebview.api.ask_yes_no(
-        "Droits administrateur",
-        "Lancer cette application en administrateur ?"
-      );
+  // 3) demander le nom après
+  const name = prompt("Nom du jeu :", defaultName);
+  if (!name) return;
 
-      const icon = await window.pywebview.api.get_icon(p);
+  const icon = await window.pywebview.api.get_icon(p);
 
-      apps.push({
-        name: name,
-        path: p,
-        icon: icon,
-        admin_required: admin_required,
-        checked: true
-      });
+  apps.push({
+    name: name,
+    path: p,
+    icon: icon,
+    checked: true
+  });
 
-      await saveApps();
-      await loadApps();
-    };
+  await saveApps();
+  render();
+};
+
   }
 
   if (btnStart) {
     btnStart.onclick = async () => {
-      const res = await window.pywebview.api.start_selected(apps);
-      if (res.errors?.length) alert("Erreurs :\n" + res.errors.join("\n"));
-      
-      // Mettre à jour les statuts après le lancement
-      setTimeout(updateProcessStatuses, 1000);
+      const result = await window.pywebview.api.start_selected(apps);
+      if (!result.ok) {
+        alert("Erreur Start :\n" + (result.errors || []).join("\n"));
+      }
+      setTimeout(refreshStatuses, 600);
     };
   }
 
   if (btnStop) {
     btnStop.onclick = async () => {
       const res = await window.pywebview.api.stop_selected(apps);
-      if (res.errors?.length) {
-        alert(`${res.killed} processus fermés\n\nErreurs :\n` + res.errors.join("\n"));
-      } else {
-        alert(`${res.killed} processus fermés`);
+      if (res.errors && res.errors.length) {
+        alert("Erreurs Stop :\n" + res.errors.join("\n"));
       }
-      
-      // Mettre à jour les statuts après l'arrêt
-      setTimeout(updateProcessStatuses, 500);
+      setTimeout(refreshStatuses, 600);
     };
   }
-});
 
-window.addEventListener("pywebviewready", async () => {
-  await loadApps();
-  setTimeout(autoResizeWindow, 100);
-  
-  // Démarrer le monitoring des processus
-  startStatusMonitoring();
-});
+  if (statusCheckInterval) clearInterval(statusCheckInterval);
+  statusCheckInterval = setInterval(refreshStatuses, 2000);
 
-window.addEventListener("resize", () => setTimeout(autoResizeWindow, 100));
+  loadVersionAndUpdateStatus();
+}
 
-// Nettoyer l'interval quand la fenêtre se ferme (optionnel)
-window.addEventListener("beforeunload", () => {
-  stopStatusMonitoring();
-});
+window.addEventListener("pywebviewready", init);

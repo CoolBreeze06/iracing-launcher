@@ -118,36 +118,14 @@ html, body {
 }
 
 .frame .app-row .case-coche.checked::after {
-  content: "✓";
+  content: "✔";
   line-height: 1;
 }
 
-/* 🟢 NOUVEAU: Indicateur de statut */
-.frame .app-row .status-indicator {
-  position: absolute;
-  left: 54px;
-  top: 15px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
-}
-
-.frame .app-row .status-indicator.running {
-  background-color: #4caf50;  /* Vert */
-  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
-}
-
-.frame .app-row .status-indicator.stopped {
-  background-color: #f44336;  /* Rouge */
-  box-shadow: 0 0 8px rgba(244, 67, 54, 0.4);
-}
-
-/* icon 32x32 - POSITION AJUSTÉE */
+/* icon 32x32 */
 .frame .app-row .icone {
   position: absolute;
-  left: 74px;  /* Décalé pour faire place au status indicator */
+  left: 60px;
   top: 14px;
   width: 32px;
   height: 32px;
@@ -162,31 +140,37 @@ html, body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.35);
 }
 
-/* name - POSITION AJUSTÉE */
+/* ✅ name (plus petit + ellipsis propre) */
 .frame .app-row .name-apps {
   position: absolute;
-  left: 134px;  /* Décalé */
+  left: 120px;
   top: 16px;
-  width: 180px;  /* Légèrement réduit */
+
+  width: 160px;          /* ✅ */
   height: 28px;
+
   background-color: #d9d9d9;
   border-radius: 12px;
 
   display: flex;
   align-items: center;
   padding: 0 12px;
+
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
   color: #020202;
+  font-size: 13px;       /* ✅ */
 }
 
-/* path - POSITION AJUSTÉE */
+/* ✅ path (réserve la place à droite pour boutons) */
 .frame .app-row .file-path {
   position: absolute;
-  left: 360px;  /* Décalé */
-  right: 190px;  /* Plus d'espace pour les nouveaux boutons */
+  left: 300px;           /* ✅ */
+  right: 220px;          /* ✅ espace réservé boutons */
   top: 16px;
+
   height: 28px;
   background-color: #d9d9d9;
   border-radius: 12px;
@@ -194,18 +178,20 @@ html, body {
   display: flex;
   align-items: center;
   padding: 0 12px;
+
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+
   color: #020202;
+  font-size: 13px;       /* ✅ */
 }
 
-/* boutons browse / delete / move / restart */
+/* boutons browse / delete / move */
 .frame .app-row .search-apps,
 .frame .app-row .delete-apps,
 .frame .app-row .move-up,
-.frame .app-row .move-down,
-.frame .app-row .restart-app {
+.frame .app-row .move-down {
   width: 30px;
   height: 30px;
   border-radius: 10px;
@@ -216,34 +202,15 @@ html, body {
   justify-content: center;
 
   user-select: none;
-  transition: all 0.2s ease;
 }
 
 .frame .app-row .search-apps {
   position: absolute;
-  right: 150px;  /* Décalé pour faire place au restart */
+  right: 114px;
   top: 15px;
   background-color: #6fb15e;
 }
 .frame .app-row .search-apps::after { content: "🔎"; font-size: 16px; }
-
-/* ⟳ NOUVEAU: Bouton Restart */
-.frame .app-row .restart-app {
-  position: absolute;
-  right: 114px;
-  top: 15px;
-  background-color: #e89c3a;  /* Orange */
-  font-size: 18px;
-  font-weight: bold;
-  color: #ffffff;
-}
-.frame .app-row .restart-app::after {
-  content: "⟳";
-}
-.frame .app-row .restart-app:hover {
-  background-color: #ff9800;
-  transform: scale(1.05);
-}
 
 .frame .app-row .move-up {
   position: absolute;
@@ -286,11 +253,10 @@ html, body {
    ✅ BARRE BOUTONS EN BAS
    ========================= */
 .frame .bottom-bar {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+  position: absolute;
+  left: 0;
+  right: 0;
   bottom: 55px;
-  width: 1024px;
 
   display: flex;
   align-items: center;
@@ -310,7 +276,6 @@ html, body {
   background: transparent;
   padding: 0;
   overflow: visible;
-  flex-shrink: 0;
 }
 
 /* tailles */
@@ -318,17 +283,13 @@ html, body {
 .frame .button-stop  { width: 202px; height: 50px; }
 .frame .button-ajout-game { width: 340px; height: 52px; }
 
-/* ✅ fonds -> TOUS en absolute */
+/* fonds */
 .frame .button-start-apps,
 .frame .button-stop-apps,
 .frame .button-ajout-apps {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   border-radius: 12px;
-  pointer-events: none;
 }
 
 .frame .button-start-apps { background-color: #6eb05e; }
@@ -338,20 +299,16 @@ html, body {
   box-shadow: 0 10px 18px rgba(0,0,0,0.25);
 }
 
-/* ✅ texte au-dessus */
+/* texte */
 .frame .text-wrapper,
 .frame .tex-ajout-jeux {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  pointer-events: none;
 }
 
 .frame .text-wrapper {
@@ -368,6 +325,125 @@ html, body {
 .frame .button-start:hover .button-start-apps,
 .frame .button-stop:hover .button-stop-apps,
 .frame .button-ajout-game:hover .button-ajout-apps {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+/* =========================
+   ✅ Version + statut (style app standard)
+   ========================= */
+.version-pill {
+  position: fixed;
+  right: 18px;
+  bottom: 130px; /* ✅ remonte au-dessus des gros boutons */
+  z-index: 300;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 7px 10px;
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+
+  user-select: none;
+  pointer-events: none;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.88);
+
+  box-shadow: 0 10px 18px rgba(0,0,0,0.35);
+}
+
+
+.version-pill .dot { opacity: 0.6; }
+
+.status-badge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.status-checking {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.status-ok {
+  color: #0b1a0b;
+  background: rgba(110, 176, 94, 0.85);
+  border-color: rgba(110, 176, 94, 0.95);
+}
+
+.status-update {
+  color: #06121c;
+  background: rgba(58, 160, 255, 0.85);
+  border-color: rgba(58, 160, 255, 0.95);
+}
+
+.status-error {
+  color: #1a0b0b;
+  background: rgba(176, 86, 88, 0.85);
+  border-color: rgba(176, 86, 88, 0.95);
+}
+
+/* ✅ Ancien affichage version (gardé mais caché) */
+.frame .version-display {
+  display: none;
+}
+
+/* =========================
+   ✅ Voyant statut + bouton restart
+   ========================= */
+
+/* Voyant rond (en service / stop) */
+.frame .app-row .status-indicator {
+  position: absolute;
+  left: 98px;
+  top: 24px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.35);
+}
+
+.frame .app-row .status-indicator.running { background-color: #6eb05e; }
+.frame .app-row .status-indicator.stopped { background-color: #b05658; }
+
+/* Bouton restart */
+.frame .app-row .restart-app {
+  position: absolute;
+  right: 150px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #f0c75e;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+  user-select: none;
+}
+
+.frame .app-row .restart-app::after {
+  content: "⟳";
+  font-size: 16px;
+  color: rgba(0,0,0,0.75);
+  font-weight: 900;
+}
+
+.frame .app-row .restart-app:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }

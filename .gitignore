@@ -1,0 +1,9 @@
+/dist/
+/build/
+*.spec
+*.exe
+launcher_apps.json
+launcher_settings.json
+*.lock
+*_backup.exe
+version_local.json
