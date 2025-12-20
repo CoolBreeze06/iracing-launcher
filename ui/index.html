@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="globals.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div class="frame">
+      <div class="title">Launcher Sim Racing</div>
+
+      <div class="description">
+        <div class="rectangle"></div>
+        <p class="div">Coche les applications à lancer avec iRacing. Ajoute ou retire ce que tu veux.</p>
+      </div>
+
+      <div class="apps-list" id="appsList"></div>
+
+      <!-- BARRE FIXE EN BAS -->
+      <div class="bottom-bar">
+        <button class="button-start" id="btnStart" type="button">
+          <div class="button-start-apps"></div>
+          <div class="text-wrapper">Start</div>
+        </button>
+
+        <button class="button-ajout-game" id="btnAdd" type="button">
+          <div class="button-ajout-apps"></div>
+          <div class="tex-ajout-jeux">Ajouter un jeu</div>
+        </button>
+
+        <button class="button-stop" id="btnStop" type="button">
+          <div class="button-stop-apps"></div>
+          <div class="text-wrapper">Stop</div>
+        </button>
+      </div>
+      
+      <!-- Version display -->
+      <div class="version-display" id="versionDisplay">Version ...</div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

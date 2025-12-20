@@ -1,0 +1,36 @@
+# Build files
+build/
+dist/
+*.spec.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# PyInstaller
+*.manifest
+
+# Application data
+launcher_apps.json
+launcher_settings.json
+launcher.lock
+*_backup.exe
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
