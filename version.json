@@ -1,5 +1,24 @@
 {
-     "version": "1.2",
-     "download_url": "https://github.com/CoolBreeze06/iracing-launcher/releases/download/v1.2/iRacing_Launcher.exe",
-     "changelog": "- Bouton restart fonctionnel (⟳)\n- Indicateur de statut temps réel (🟢/🔴)\n- Affichage version dans l'interface\n- Système de mise à jour automatique complet"
-   }
+  "version": "1.3",
+  "download_url": "https://github.com/CoolBreeze06/iracing-launcher/releases/download/v1.3/iRacing_Launcher.exe",
+  "changelog": "- Nouveau style visuel racing\n- Option masquer la barre des tâches automatiquement\n- Corrections de bugs d'affichage"
+}
+```
+
+### 3. Crée une nouvelle Release sur GitHub
+
+1. Va sur : https://github.com/CoolBreeze06/iracing-launcher/releases
+2. Clique **"Draft a new release"**
+3. Remplis :
+   - **Tag** : `v1.3`
+   - **Title** : `iRacing Launcher v1.3`
+   - **Description** :
+```
+   ## Nouveautés v1.3
+   - 🎨 Nouveau style visuel racing (thème sombre avec accents néon)
+   - 📌 Option pour masquer automatiquement la barre des tâches
+   - 🔧 Corrections de bugs d'affichage
+   
+   ## Installation
+   1. Téléchargez `iRacing_Launcher.exe` et `updater.exe`
+   2. Remplacez les anciens fichiers
